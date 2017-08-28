@@ -14,18 +14,20 @@ function add_todo_elements(id, todos_data_json){
     parent.innerText = todos_data_json;
 }
 
+// Repo URL - https://github.com/malikankit/todo-august-28
+
 function getTodosAJAX(){
+
+    // xhr - JS object for making requests to server via JS
     var xhr = new XMLHttpRequest();
+    //
     xhr.open("GET", "/api/todos", true);
+
     xhr.onreadystatechange = function(){
-        // Write code here that needs to be
-        // executed after response
-        // Has response been received
+
         if (xhr.readyState == RESPONSE_DONE){
-            // Is Response OK?
-            // Status Code == 200
+
             if(xhr.status == STATUS_OK){
-               // xhr.response // xhr.responseText
                 console.log(xhr.responseText);
                 add_todo_elements(TODOS_LIST_ID, xhr.responseText);
             }
