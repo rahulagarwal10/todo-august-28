@@ -2,6 +2,7 @@ console.log("Is Script File Loading");
 const RESPONSE_DONE = 4;
 const STATUS_OK = 200;
 const TODOS_LIST_ID = "todos_list_div";
+const NEW_TODO_INPUT_ID = "new_todo_input";
 
 
 
@@ -43,7 +44,35 @@ function createTodoElement(id, todo_object){
     var todo_element = document.createElement("div");
     todo_element.innerText = todo_object.title;
     // HW: Read custom data-* attributes
-    todo_element.setAttribute("data-id", id);
+    todo_element.setAttribute(
+        "data-id", id
+    );
+
+    todo_element.setAttribute(
+        "class", "todoStatus"+ todo_object.status + " " + "breathVertical"
+    );
+
+
+    if (todo_object.status == "ACTIVE"){
+
+    var complete_button = document.createElement("button");
+    complete_button.innerText = "Mark as Complete";
+    complete_button.setAttribute("onclick", "completeTodoAJAX("+id+")");
+    complete_button.setAttribute("class", "breathHorizontal");
+    todo_element.appendChild(complete_button);
+    }
+
+
+    if (todo_object.status != "DELETED"){
+        // HW : Add this functionality
+        // Add Delete Buttons for ACTIVE, COMPLETE TODO ITEMS
+        // add a delete button
+        // HW : Write this code
+    }
+
+
+
+
     return todo_element;
 
 }
@@ -70,5 +99,94 @@ function getTodosAJAX(){
     xhr.send(data=null);
 
 }
+
+
+
+function addTodoAJAX(){
+
+    var title= document.getElementById(NEW_TODO_INPUT_ID).value;
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/todos", true);
+    // the data in this body will be of this form
+    xhr.setRequestHeader(
+        "Content-type", "application/x-www-form-urlencoded");
+
+    // HW : Read format of X-W-F-U-E
+    // HW : Look up encodeURI
+    var data = "todo_title=" + encodeURI(title);
+
+    xhr.onreadystatechange = function(){
+
+        if (xhr.readyState == RESPONSE_DONE) {
+            if (xhr.status == STATUS_OK) {
+                addTodoElements(TODOS_LIST_ID, xhr.responseText);
+            }
+            else {
+                console.log(xhr.responseText);
+            }
+        }
+    }
+
+    xhr.send(data);
+
+}
+
+
+
+function completeTodoAJAX(id){
+
+    // Make a AJAX Request to update todo with the above id
+    // If Response is 200 : refreshTodoElements
+
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("PUT", "/api/todos/"+id, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    data = "todo_status=COMPLETE";
+
+    xhr.onreadystatechange = function(){
+
+        if (xhr.readyState == RESPONSE_DONE) {
+            if (xhr.status == STATUS_OK) {
+                addTodoElements(TODOS_LIST_ID, xhr.responseText);
+            }
+            else {
+                console.log(xhr.responseText);
+            }
+        }
+    }
+
+
+
+    xhr.send(data);
+
+    // The body can contain these parameters (XWFUE format)
+    //todo_title=newtitle
+    //todo_status= ACTIVE/COMPLETE/DELETED
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
