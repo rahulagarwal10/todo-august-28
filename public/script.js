@@ -3,17 +3,50 @@ const RESPONSE_DONE = 4;
 const STATUS_OK = 200;
 const TODOS_LIST_ID = "todos_list_div";
 
-// AJAX - xmlhttprequest object
-// make requests to the server
-// 1. without reloading the webpage
-// 2. asynchronously
 
-function add_todo_elements(id, todos_data_json){
+
+// IF you want to run a function everytime the page loads
+// window.onload OR document.onload
+// HW : Differences : Subtle difference when this method is called
+// window.onload - more widely supported
+//
+window.onload = getTodosAJAX();
+
+// addTodos
+// id = "todos_list_div"
+// todos_data_json =
+// parent = div
+function addTodoElements(id, todos_data_json){
+
+    var todos = JSON.parse(todos_data_json);
 
     var parent = document.getElementById(id);
-    parent.innerText = todos_data_json;
-}
+    // HW : Figure out "encouraged" view of doing this
+    parent.innerHTML = "";
 
+    if (parent){
+
+        // todos { id : {todo object}, id : {todo:object} ..}
+        Object.keys(todos).forEach(
+
+            function(key) {
+                var todo_element = createTodoElement(key, todos[key]);
+                parent.appendChild(todo_element);
+            }
+        )
+    }
+}
+// id : 1
+// todo_object : {title: A Task, status : ACTIVE}
+function createTodoElement(id, todo_object){
+
+    var todo_element = document.createElement("div");
+    todo_element.innerText = todo_object.title;
+    // HW: Read custom data-* attributes
+    todo_element.setAttribute("data-id", id);
+    return todo_element;
+
+}
 // Repo URL - https://github.com/malikankit/todo-august-28
 
 function getTodosAJAX(){
@@ -29,7 +62,7 @@ function getTodosAJAX(){
 
             if(xhr.status == STATUS_OK){
                 console.log(xhr.responseText);
-                add_todo_elements(TODOS_LIST_ID, xhr.responseText);
+                addTodoElements(TODOS_LIST_ID, xhr.responseText);
             }
         }
     }// end of callback
